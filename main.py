@@ -2,7 +2,6 @@ from pytube import YouTube
 import shelve
 import pprint
 import requests
-import bs4
 import re
 
 # Define add channels method
