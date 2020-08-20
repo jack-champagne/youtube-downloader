@@ -23,7 +23,7 @@ with shelve.open('my-content') as db:
     channels = db.get('channels')
     if channels == None:
         channels = []
-    recent_videos = db.get('channels')
+    recent_videos = db.get('recent')
     if recent_videos == None:
         recent_videos = []
 
@@ -52,18 +52,30 @@ with shelve.open('my-content') as db:
     print('Ok, checking for new videos for:')
     pprint.pprint(channels)  
 
-    url_regex = re.compile('("commandMetadata":{"webCommandMetadata":{"url":"(\/watch\?v=.+?)"{1})')
+    url_regex = re.compile(r'("commandMetadata":{"webCommandMetadata":{"url":"(\/watch\?v=.+?)"{1})')
 
     for channel in channels:
+
         page = requests.get(channel + '/videos') # Get current list of videos
         page.raise_for_status()
         matched_vid = url_regex.search(page.text)
-        new_vid_url = "www.youtube.com" + matched_vid.group(2)
+        new_vid_url = "https://www.youtube.com" + matched_vid.group(2)
 
-    # Download video
+        # Check to see if video has not been downloaded
+        if new_vid_url not in recent_videos:
+            recent_videos.append(new_vid_url)
+        else:
+            print('No new videos from: ' + channel)
+            continue
+    
+        # Download video
+        yt = YouTube(new_vid_url)
+        print('Downloading: ' + yt.title + '\nFrom: ' + channel)
+        stream = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
 
-    # # Name video the title
+        stream.download('./downloads/')
+        # # Name video the title
 
-# Print total watch time
+    # Print total watch time
 
-# Save shelve
+    # Save shelve
