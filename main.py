@@ -10,6 +10,12 @@ def new_channels(chans):
     print('Please enter youtube channel url you would like to add or press enter to stop')
     response = input()
     while response != '':
+        # Clean up dirty inputs
+        if response.endswith('/'):
+            response = response[:-1]
+        if response.endswith('/videos'):
+            response = response[:-7]
+
         chans.append(response)
         response = input()
     
@@ -54,6 +60,8 @@ with shelve.open('my-content') as db:
 
     url_regex = re.compile(r'("commandMetadata":{"webCommandMetadata":{"url":"(\/watch\?v=.+?)"{1})')
 
+    local_watchtime = 0
+    videos_downloaded = 0
     for channel in channels:
 
         page = requests.get(channel + '/videos') # Get current list of videos
@@ -70,12 +78,37 @@ with shelve.open('my-content') as db:
     
         # Download video
         yt = YouTube(new_vid_url)
-        print('Downloading: ' + yt.title + '\nFrom: ' + channel)
+        print('Downloading: ' + yt.title + '\nFrom: ' + yt.author)
         stream = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
 
         stream.download('./downloads/')
-        # # Name video the title
+        print('Download successful.')
+
+        print('Added ' + str(yt.length) + ' seconds to downloaded videos today')
+        local_watchtime += yt.length
+        videos_downloaded += 1
 
     # Print total watch time
+    print('Done downloading ' + str(videos_downloaded) + ' video(s).')
+    total_watchtime = db.get('watchtime')
+    if total_watchtime == None:
+        total_watchtime = 0
+    total_watchtime += local_watchtime
+
+    # Get minutes and seconds for display
+    mins = total_watchtime // 60
+    seconds = total_watchtime % 60
+    sec_str = ''
+    if seconds < 10:
+        sec_str = '0' + str(seconds)
+    else:
+        sec_str = str(seconds)
+    print('Total video watchtime: ' + str(mins) + ":" + sec_str)
 
     # Save shelve
+    db['watchtime'] = total_watchtime
+    db['channels'] = channels
+    db['recent'] = recent_videos
+
+    print('Video profile saved. Goodbye')
+    exit(0)
