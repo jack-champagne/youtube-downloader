@@ -152,8 +152,7 @@ def main():
     watchtime += today_watchtime
     print('Total watchtime: ' + get_watchtime(watchtime))
     ytdb['watchtime'] = watchtime
-    print('Video profile saved. Goodbye')    
-    exit(0)
+    print('Video profile saved. Goodbye')
 
 
 today_watchtime = 0
