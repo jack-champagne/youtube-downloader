@@ -108,11 +108,12 @@ def main():
     # Print current channels
     print('List of current channels:', end='')
     pprint.pprint(channels)
-    
+
     if (len(sys.argv) == 2):
         if (sys.argv[1] == 'auto'):
             refresh_catalogue()
             exit
+            
     # Ask for input
     valid_input = False
     while not valid_input:
