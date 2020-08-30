@@ -5,7 +5,7 @@ import re
 import youtube_dl
 import threading
 import os
-
+import sys
 
 def download(video_url):
     with youtube_dl.YoutubeDL({'quiet': True}) as ydl:
@@ -89,6 +89,10 @@ def get_watchtime(watchtime_s):
 
 
 def main():
+    if (len(sys.argv) == 2):
+        if (sys.argv[1] == 'auto'):
+            refresh_catalogue()
+            exit
     # Load database info
     ytdb = shelve.open('my-content')
     global channels
