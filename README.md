@@ -10,3 +10,7 @@ pip install --upgrade youtube-dl
 ```
 
 And that's it! Run the script, feel free to add PRs and issues if you are interested.
+
+### Contributors
+* [jackchampagne](https://github.com/jack-champagne/)
+* [ramalamadingdong](https://github.com/ramalamadingdong/)
