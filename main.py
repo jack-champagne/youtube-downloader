@@ -89,10 +89,6 @@ def get_watchtime(watchtime_s):
 
 
 def main():
-    if (len(sys.argv) == 2):
-        if (sys.argv[1] == 'auto'):
-            refresh_catalogue()
-            exit
     # Load database info
     ytdb = shelve.open('my-content')
     global channels
@@ -112,7 +108,11 @@ def main():
     # Print current channels
     print('List of current channels:', end='')
     pprint.pprint(channels)
-
+    
+    if (len(sys.argv) == 2):
+        if (sys.argv[1] == 'auto'):
+            refresh_catalogue()
+            exit
     # Ask for input
     valid_input = False
     while not valid_input:
