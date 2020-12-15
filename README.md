@@ -16,6 +16,6 @@ And that's it! Run the script, feel free to add PRs and issues if you are intere
 * [ramalamadingdong](https://github.com/ramalamadingdong/)
 
 ### Improvements to be made:
-* [ ] - Rewrite to reduce/eliminate global variables to improve code readability.
+* [X] - Rewrite to reduce/eliminate global variables to improve code readability.
 * [ ] - Improve customizability?
-* [ ] - Continue writing out this list
+* [ ] - Make issues to track bugs/features/improvements and more!
