@@ -13,6 +13,7 @@ import util
 def download_new(my_cat):
     videos_to_download = get_new_videos(my_cat)
 
+    os.chdir('downloads')
     # Multi-threaded downloading videos
     threads = []
     for video in videos_to_download:
@@ -24,6 +25,7 @@ def download_new(my_cat):
         thread.start()
     for thread in threads:
         thread.join()
+    os.chdir('..')
     print('All videos downloaded, back to main menu')
 
 
@@ -76,9 +78,15 @@ def add_new_channels():
 # Returns...
 # New list of current channels
 def delete_channel(channels):
-    chan = input()
+    print('Please type channel url you would like to unsubscribe from or press enter to stop')
+    chan = None
     while chan not in channels:
-        print('Not found, please try again')
+        chan = input()
+        if chan == '':
+            print('Returning to main menu.')
+            return channels
+        if chan not in channels:
+            print('Not found, please try again')
     
     channels.remove(chan)
     print('Channel: ' + chan + ' removed.')
@@ -92,7 +100,7 @@ def delete_channel(channels):
 # Return format...
 # Dictionary {"Channels" : ["Channel urls"], "Downloaded" : ["Video urls"]}
 def load_catalogue():
-    if not os.path.exists('local\my-content.txt'):
+    if not os.path.exists(r'local\my-content.txt'):
         util.create_file('my-content.txt')
 
     yt_file = open('local\my-content.txt', 'r')
