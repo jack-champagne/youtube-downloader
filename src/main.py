@@ -2,12 +2,15 @@ import sys
 import catalogue
 import downloader
 import os
+import pprint
 
 # Pretty gross main method imo
 def start():
     # Local folder contains configuration and save information
     if not os.path.exists('local'):
         os.mkdir('local')
+    if not os.path.exists('downloads'):
+        os.mkdir('downloads')
 
     my_catalogue = catalogue.load_catalogue()
     my_stats = downloader.load_stats()
@@ -19,12 +22,12 @@ def start():
             exit(0)
 
     print(
-        '''==== Welcome to Youtube-Downloader ====
+        '''========= Welcome to Youtube-Downloader ==========
         Here are your stats
         * Total Watchtime = %d minutes
         * Total Videos = %d videos''' % (my_stats.get('Watchtime'), my_stats.get('Videos'))
     )
-    print('=======================================')
+    new_page()
 
     display_menu(my_catalogue)
 
@@ -39,38 +42,50 @@ def display_menu(my_cat):
 
         # Print user menu options
         print(
-        r'''Please select an option:
-        [A]dd channels
-        [D]ownload recent videos
-        [R]emove channels
-        [C]lear video catalogue
-        [V]iew channels
-        [Q]uit''')
+        '''\tPlease select an option:
+        * [A]dd channels
+        * [D]ownload recent videos
+        * [R]emove channels
+        * [C]lear video catalogue
+        * [V]iew channels
+        * [Q]uit''')
 
         response = input()
         if response in ['r', 'R']:
+            new_page()
             my_cat['Channels'] = catalogue.delete_channel(my_cat['Channels'])
+            new_page()
 
         elif response in ['c', 'C']:
+            new_page()
             my_cat['Downloaded'] = []
+            print("Downloaded videos cleared!")
+            new_page()
 
         elif response in ['q', 'Q']:
+            new_page()
+            print("Goodbye!")
             running = False
 
         elif response in ['d', 'D']:
+            new_page()
             catalogue.download_new(my_cat)
+            new_page()
 
         elif response in ['a', 'A']:
-            if len(my_cat['Channels']) != 0:
-                my_cat['Channels'].append(catalogue.add_new_channels())
-            else:
-                my_cat['Channels'] = catalogue.add_new_channels()
+            new_page()
+            my_cat['Channels'] += catalogue.add_new_channels()
+            new_page()
 
         elif response in ['v', 'V']:
+            new_page()
+            print('SUBSCRIBED CHANNELS:\n')
+
             if len(my_cat['Channels']) != 0:
-                print(my_cat['Channels'])
+                print('\n'.join(my_cat['Channels']))
             else:
                 print('No channels found!')
+            new_page()
 
         elif response in ['p', 'P']:
             print('PAUSED')
@@ -79,6 +94,12 @@ def display_menu(my_cat):
             print(downloader.get_stats())
 
         else:
-            continue
+            new_page()
+            print('Invalid Input: ' + response)
+            new_page()
+        
+
+def new_page():
+    print('==================================================')
 
 start()
