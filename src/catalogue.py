@@ -16,7 +16,9 @@ def download_new(my_cat):
     # Multi-threaded downloading videos
     threads = []
     for video in videos_to_download:
-        threads.append(threading.Thread(target=downloader.download_video, args=(video,)))
+        full_url = youtube_info.get_full_video_url(video)
+        print("Downloading: " + full_url)
+        threads.append(threading.Thread(target=downloader.download_video, args=(full_url,)))
         my_cat['Downloaded'].append(video)
     for thread in threads:
         thread.start()
@@ -80,6 +82,7 @@ def delete_channel(channels):
     
     channels.remove(chan)
     print('Channel: ' + chan + ' removed.')
+    return channels
         
 
 # Reads file for channels and recently downloaded vids Format:

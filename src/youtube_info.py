@@ -23,4 +23,6 @@ def get_videos(channel_uid):
         videos.append((entry['yt:videoId'], entry['title']))
     return videos
 
-    
+def get_full_video_url(video_id):
+    return 'https://www.youtube.com/watch?v=' + video_id
+

@@ -7,7 +7,7 @@ def get_watchtime(watchtime_s):
     hours = watchtime_s % 24
     watchtime_s //= 24
     days = watchtime_s
-    return str(days) + ' days ' + str(hours) + ':' + str(minutes) + ':' + str(seconds)
+    return str(days) + ' days ' + '{:02}'.format(hours) + ':' + '{:02}'.format(minutes) + ':' + '{:02}'.format(seconds)
 
 # Creates a file in the local dir
 def create_file(filename):
