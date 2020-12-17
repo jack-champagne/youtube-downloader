@@ -30,7 +30,6 @@ def start():
     new_page()
 
     display_menu(my_catalogue)
-    new_page()
     
     catalogue.save_catalogue(my_catalogue)
     downloader.save_stats(my_stats)
