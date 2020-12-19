@@ -2,7 +2,6 @@ import sys
 import catalogue
 import downloader
 import os
-import pprint
 
 # Pretty gross main method imo
 def start():
@@ -15,10 +14,11 @@ def start():
     my_catalogue = catalogue.load_catalogue()
     my_stats = downloader.load_stats()
 
-    # TODO: Reimplement after rewrite.
     if (len(sys.argv) == 2):
         if (sys.argv[1] == 'auto'):
             catalogue.download_new(my_catalogue)
+            catalogue.save_catalogue(my_catalogue)
+            downloader.save_stats(my_stats)
             exit(0)
 
     print(
@@ -33,7 +33,6 @@ def start():
     
     catalogue.save_catalogue(my_catalogue)
     downloader.save_stats(my_stats)
-
 
 def display_menu(my_cat):
     # Ask for input
