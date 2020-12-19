@@ -1,3 +1,11 @@
+"""
+Catalogue manages the list of recently downloaded videos so that we know what is new and what is old
+it also maintains a list of channels that we are "subscribed" to through the bot's inner workings.
+
+author: Jack Champagne
+date: 12/19/2020
+"""
+
 import os
 import threading
 import downloader
@@ -6,10 +14,18 @@ import pprint
 import youtube_info
 import util
 
-# Catalogue manages the list of recently downloaded videos so that we know what is new and what is old
-# it also maintains a list of channels that we are "subscribed" to through the bot's inner workings.
-
-# Catalogue checks the web for new videos from channels
+# Function: download_new
+# Arguments: Youtube catalogue --> {"Videos" : [<List of recent videos>], "Channels":[<List of subscribed channels]}
+# 
+# Overview:
+# * We retrieve a list of *new* videos by checking each channel's feed and comparing against previously downloaded videos
+# * For each *new* video we want to download it by creating a thread to handle the video download, the way the download happens concurrently
+# Done!
+# 
+# Prequisties:
+# * Stable internet connection
+# * Directory "downloads" exists in the current directory
+# * my_cat is a valid Youtube Catalogue
 def download_new(my_cat):
     videos_to_download = get_new_videos(my_cat)
 
@@ -29,8 +45,17 @@ def download_new(my_cat):
     print('All videos downloaded, back to main menu')
 
 
-# Precondition: Stable internet connection (lol)
-# Return list of new videos from each channel.
+# Function: get_new_videos
+# Arguments: Youtube catalogue --> {"Videos" : [<List of recent videos>], "Channels":[<List of subscribed channels]}
+# 
+# Overview:
+# * We retrieve a list of subsribed channels to read each one's feed.
+# * We check that most recent video from a channel's feed is not already downloaded.
+# * Return list of videos that have not been downloaded yet from respective channels
+# 
+# Prequisties:
+# * Stable internet connection
+# * my_cat is a valid Youtube Catalogue
 def get_new_videos(my_cat):
     chans = my_cat["Channels"]
     videos_to_download = []
@@ -52,10 +77,15 @@ def get_new_videos(my_cat):
     return videos_to_download
 
 
-# ADD channels to check new videos from (subscribe to a channel)
+# Function: add_new_channels
+# Arguments: None
 # 
-# Returns...
-# ["New channel urls", "as a list"]
+# Overview:
+# * Handle and clean user input for slightly different urls to make it easier to understand the local file(s) and stats.
+# * Keep adding channels until user hits enter twice in a row.
+# 
+# Prequisties:
+# * None
 def add_new_channels():
     new_channels = []
     print('Please enter youtube channel URL you would like to add or press enter to stop')
@@ -73,10 +103,16 @@ def add_new_channels():
     return new_channels
 
 
-# Takes in current channels subscribed to and will remove channels according to user input
+# Function: delete_channels
+# Arguments: current channel list from Youtube Catalogue
 # 
-# Returns...
-# New list of current channels
+# Overview:
+# * "Unsubscribe" from unwanted channels by typing out the url of the channel to be deleted
+# * Can be cancelled by pressing enter
+# * Handles if given channel is not a valid subscribed channel
+# 
+# Prequisties:
+# * channels is a correct channel list
 def delete_channel(channels):
     print('Please type channel url you would like to unsubscribe from or press enter to stop')
     chan = None
@@ -93,12 +129,19 @@ def delete_channel(channels):
     return channels
         
 
-# Reads file for channels and recently downloaded vids Format:
-# Video URLs (CSV)
-# Channels URLS (CVS)
+# Function: load_catalogue
+# Arguments: None
 # 
-# Return format...
-# Dictionary {"Channels" : ["Channel urls"], "Downloaded" : ["Video urls"]}
+# Overview:
+# * Loads in local/my-content.txt for reading
+# * Gets list of already downloaded videos from first line (comma separated)
+# * Gets list of subscribed channels from second line
+# * If file has not been formatted yet, create the format by creating a linefeed and creating empty lists for catalogue
+# 
+# Prequisties:
+# * local directory exists
+# * my-content.txt is not being used by another process
+# * contents of my-content.txt is properly formatted (2 lines, both comma separated)
 def load_catalogue():
     if not os.path.exists(r'local\my-content.txt'):
         util.create_file('my-content.txt')
@@ -120,7 +163,15 @@ def load_catalogue():
     return {"Channels" : channels, "Downloaded" : recently_downloaded }
 
 
-# Takes in my_cat and saves to appropriate file
+# Function: save_catalogue
+# Arguments: Youtube catalogue to save
+# 
+# Overview:
+# * Opens local\my-content and writes downloaded videos and subsribed channels to their respective lines (comma separated)
+# 
+# Prequisties:
+# * local\my-content.txt exists
+# * local\my-content.txt is not being used by another process.
 def save_catalogue(my_cat):
     yt_save = open('local\my-content.txt', 'w+')
     yt_save.write(','.join(my_cat['Downloaded']) + '\n')
